@@ -2,28 +2,37 @@
     "CustomAgent": {
         "checkpoints": [
             {
-                "steps": 1216,
-                "file_path": "results\\test10\\CustomAgent\\CustomAgent-1216.onnx",
-                "reward": null,
-                "creation_time": 1620435927.0749872,
+                "steps": 499952,
+                "file_path": "results\\test10\\CustomAgent\\CustomAgent-499952.onnx",
+                "reward": 0.0,
+                "creation_time": 1620733829.9892805,
                 "auxillary_file_paths": [
-                    "results\\test10\\CustomAgent\\CustomAgent-1216.pt"
+                    "results\\test10\\CustomAgent\\CustomAgent-499952.pt"
+                ]
+            },
+            {
+                "steps": 500016,
+                "file_path": "results\\test10\\CustomAgent\\CustomAgent-500016.onnx",
+                "reward": 0.0,
+                "creation_time": 1620733830.1011124,
+                "auxillary_file_paths": [
+                    "results\\test10\\CustomAgent\\CustomAgent-500016.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 1216,
+            "steps": 500016,
             "file_path": "results\\test10\\CustomAgent.onnx",
-            "reward": null,
-            "creation_time": 1620435927.0749872,
+            "reward": 0.0,
+            "creation_time": 1620733830.1011124,
             "auxillary_file_paths": [
-                "results\\test10\\CustomAgent\\CustomAgent-1216.pt"
+                "results\\test10\\CustomAgent\\CustomAgent-500016.pt"
             ]
         }
     },
     "metadata": {
         "stats_format_version": "0.3.0",
         "mlagents_version": "0.26.0",
-        "torch_version": "1.7.1+cu110"
+        "torch_version": "1.8.1+cu111"
     }
 }

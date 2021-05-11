@@ -29,17 +29,7 @@ public class CustomAgent : Agent
         //    transform.localPosition = Vector2.zero;
         //}
 
-        targetTransform.localPosition = Vector2.zero;
-        for (int i = 0; i < numChecks; i++)
-        {
-            Vector3 possiblePosition = new Vector3(targetTransform.localPosition.x + Random.Range(-10, 10), targetTransform.localPosition.y + Random.Range(-10, 10), targetTransform.localPosition.z);
-
-            if (!Physics2D.OverlapBox(possiblePosition, targetTransform.localScale, 0f))
-            {
-                targetTransform.localPosition = possiblePosition;
-                break;
-            }
-        }
+        ResetTargetPosition();
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -62,28 +52,51 @@ public class CustomAgent : Agent
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        // Actions, size = 2
-        Vector2 controlSignal = Vector2.zero;
-        controlSignal.x = actionBuffers.ContinuousActions[0];
-        controlSignal.y = actionBuffers.ContinuousActions[1];
-        rb.velocity = controlSignal * velocityMultiplier * Time.fixedDeltaTime;
+        //// Actions, size = 2
+        //Vector2 controlSignal = Vector2.zero;
+        //controlSignal.x = actionBuffers.ContinuousActions[0];
+        //controlSignal.y = actionBuffers.ContinuousActions[1];
+        //rb.velocity = controlSignal * velocityMultiplier * Time.fixedDeltaTime;
 
-        //// Rewards
-        //float distanceToTarget = Vector3.Distance(transform.localPosition, targetTransform.localPosition);
+        ////// Rewards
+        ////float distanceToTarget = Vector3.Distance(transform.localPosition, targetTransform.localPosition);
 
-        //// Reached target
-        //if (distanceToTarget < 1.42f)
+        ////// Reached target
+        ////if (distanceToTarget < 1.42f)
+        ////{
+        ////    SetReward(1.0f);
+        ////    EndEpisode();
+        ////}
+
+        //// Fell off platform
+        //if (transform.localPosition.y < -10 || transform.localPosition.y > 10 ||
+        //    transform.localPosition.x < -10 || transform.localPosition.x > 10)
         //{
-        //    SetReward(1.0f);
         //    EndEpisode();
         //}
+        Vector2 movementDirection = Vector2.zero;
 
-        // Fell off platform
-        if (transform.localPosition.y < -10 || transform.localPosition.y > 10 ||
-            transform.localPosition.x < -10 || transform.localPosition.x > 10)
+        int movementX = actionBuffers.DiscreteActions[0];
+        int movementY = actionBuffers.DiscreteActions[1];
+
+        if (movementX == 1)
         {
-            EndEpisode();
+            movementDirection.x = 1;
         }
+        if (movementX == 2)
+        {
+            movementDirection.x = -1;
+        }
+        if (movementY == 1)
+        {
+            movementDirection.y = 1;
+        }
+        if (movementY == 2)
+        {
+            movementDirection.y = -1; 
+        }
+
+        rb.velocity = movementDirection.normalized * velocityMultiplier * Time.fixedDeltaTime;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -91,6 +104,7 @@ public class CustomAgent : Agent
         if (collision.gameObject.CompareTag("Target"))
         {
             AddReward(1.0f);
+            
             EndEpisode();
         }
 
@@ -99,6 +113,28 @@ public class CustomAgent : Agent
             rb.velocity = Vector2.zero;
             transform.localPosition = Vector2.zero;
             EndEpisode();
+        }
+
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            rb.velocity = Vector2.zero;
+            transform.localPosition = Vector2.zero;
+            EndEpisode();
+        }
+    }
+
+    public void ResetTargetPosition()
+    {
+        targetTransform.localPosition = Vector2.zero;
+        for (int i = 0; i < numChecks; i++)
+        {
+            Vector3 possiblePosition = new Vector3(targetTransform.localPosition.x + Random.Range(-10, 10), targetTransform.localPosition.y + Random.Range(-10, 10), targetTransform.localPosition.z);
+
+            if (!Physics2D.OverlapBox(possiblePosition, targetTransform.localScale, 0f))
+            {
+                targetTransform.localPosition = possiblePosition;
+                break;
+            }
         }
     }
 }

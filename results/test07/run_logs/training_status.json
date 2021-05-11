@@ -2,28 +2,28 @@
     "CustomAgent": {
         "checkpoints": [
             {
-                "steps": 369783,
-                "file_path": "results\\test07\\CustomAgent\\CustomAgent-369783.onnx",
-                "reward": null,
-                "creation_time": 1620435501.6457746,
+                "steps": 505,
+                "file_path": "results\\test07\\CustomAgent\\CustomAgent-505.onnx",
+                "reward": 0.0,
+                "creation_time": 1620729675.8968198,
                 "auxillary_file_paths": [
-                    "results\\test07\\CustomAgent\\CustomAgent-369783.pt"
+                    "results\\test07\\CustomAgent\\CustomAgent-505.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 369783,
+            "steps": 505,
             "file_path": "results\\test07\\CustomAgent.onnx",
-            "reward": null,
-            "creation_time": 1620435501.6457746,
+            "reward": 0.0,
+            "creation_time": 1620729675.8968198,
             "auxillary_file_paths": [
-                "results\\test07\\CustomAgent\\CustomAgent-369783.pt"
+                "results\\test07\\CustomAgent\\CustomAgent-505.pt"
             ]
         }
     },
     "metadata": {
         "stats_format_version": "0.3.0",
         "mlagents_version": "0.26.0",
-        "torch_version": "1.7.1+cu110"
+        "torch_version": "1.8.1+cu111"
     }
 }
