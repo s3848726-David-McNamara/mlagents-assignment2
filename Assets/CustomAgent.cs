@@ -14,29 +14,68 @@ public class CustomAgent : Agent
     public int numChecks;
     public float velocityMultiplier = 10;
 
+    /*
+     * Starting range is normally set to 3, so a max spawn area of +3 x and -3 x, and +3 y and -3 y.
+     * Refer to Tristan if that doesnt make sense. 
+     */
+    public float startingRange;
+
+    /*
+     * Range increment is like 0.05, it just increases the range when a particular number of episodes has elapsed.
+     */
+    public float rangeIncrement;
+
+    /*
+     * This is a really important attribute, since there the only way for an episode to reset is for the agent to get to 
+     * the goal it is important to tinker with this attribute, I forgot what I set it to but I think it was like maybe 50 or even 100. IDK, soz 
+     */
+    public int episodesTillRangeIncrement;
+
+    /*
+     * This is set to 10, unless you change the size of the play area, dont change this value.
+     */
+    public float maxRange;
+
+    private float range;
+    private int episodeCount;
+
     private void Start()
     {
+        range = startingRange;
+        episodeCount = 0;
         rb = GetComponent<Rigidbody2D>();
+        rb.angularVelocity = 0f;
         startingLocalPosition = transform.localPosition;
     }
 
     public override void OnEpisodeBegin()
     {
-        //if (transform.localPosition.y < -10 || transform.localPosition.y > 10 ||
-        //    transform.localPosition.x < -10 || transform.localPosition.x > 10)
-        //{
-        //    rb.velocity = Vector2.zero;
-        //    transform.localPosition = Vector2.zero;
-        //}
+        /*
+         * So essentially, each time the agent reaches a goal this will increase the episode count,
+         * if then agent reaches the goal enough, the goal will be able to spawn into a larger radius around the map,
+         * this basically tricks the agent at the start into collecting / realising that going to the goal is good and thus
+         * by the time the goal is starts to spawn far away the agent realises that it needs to go to the goal.
+         */
+        episodeCount += 1;
+        if (episodeCount >= episodesTillRangeIncrement)
+        {
+            if (range < maxRange)
+            {
+                range += rangeIncrement;
+            }
+        }
+
+        /*
+         * It would be cool for later experiments to remove this and just have the agent freely move the enviroment.
+         */
+        transform.localPosition = Vector2.zero;
 
         ResetTargetPosition();
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        var continuousActionsOut = actionsOut.ContinuousActions;
-        continuousActionsOut[0] = Input.GetAxis("Horizontal");
-        continuousActionsOut[1] = Input.GetAxis("Vertical");
+
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -44,59 +83,50 @@ public class CustomAgent : Agent
         // Target and Agent positions
         sensor.AddObservation(targetTransform.localPosition);
         sensor.AddObservation(transform.localPosition);
+        sensor.AddObservation(rb.velocity);
 
-        // Agent velocity
-        sensor.AddObservation(rb.velocity.x);
-        sensor.AddObservation(rb.velocity.y);
+        /*
+         * Possible observations to add: 
+         * 1. distance from the agent to the target
+         * 2. A raycast or boolean value that is true if there are no walls in the way of the agent and false if there is.
+         */
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        //// Actions, size = 2
-        //Vector2 controlSignal = Vector2.zero;
-        //controlSignal.x = actionBuffers.ContinuousActions[0];
-        //controlSignal.y = actionBuffers.ContinuousActions[1];
-        //rb.velocity = controlSignal * velocityMultiplier * Time.fixedDeltaTime;
+        /*
+         * it would be cool to experiment with continous actions.
+         */
 
-        ////// Rewards
-        ////float distanceToTarget = Vector3.Distance(transform.localPosition, targetTransform.localPosition);
 
-        ////// Reached target
-        ////if (distanceToTarget < 1.42f)
-        ////{
-        ////    SetReward(1.0f);
-        ////    EndEpisode();
-        ////}
-
-        //// Fell off platform
-        //if (transform.localPosition.y < -10 || transform.localPosition.y > 10 ||
-        //    transform.localPosition.x < -10 || transform.localPosition.x > 10)
-        //{
-        //    EndEpisode();
-        //}
         Vector2 movementDirection = Vector2.zero;
 
-        int movementX = actionBuffers.DiscreteActions[0];
-        int movementY = actionBuffers.DiscreteActions[1];
+        int movement = actionBuffers.DiscreteActions[0];
 
-        if (movementX == 1)
+        if (movement == 0)
         {
             movementDirection.x = 1;
         }
-        if (movementX == 2)
+        if (movement == 1)
         {
             movementDirection.x = -1;
         }
-        if (movementY == 1)
+        if (movement == 2)
         {
             movementDirection.y = 1;
         }
-        if (movementY == 2)
+        if (movement == 3)
         {
-            movementDirection.y = -1; 
+            movementDirection.y = -1;
         }
 
         rb.velocity = movementDirection.normalized * velocityMultiplier * Time.fixedDeltaTime;
+
+        if (movementDirection != Vector2.zero)
+        {
+            transform.up = rb.velocity;
+        }
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -104,21 +134,6 @@ public class CustomAgent : Agent
         if (collision.gameObject.CompareTag("Target"))
         {
             AddReward(1.0f);
-            
-            EndEpisode();
-        }
-
-        if (collision.gameObject.CompareTag("BackgroundWall"))
-        {
-            rb.velocity = Vector2.zero;
-            transform.localPosition = Vector2.zero;
-            EndEpisode();
-        }
-
-        if (collision.gameObject.CompareTag("Wall"))
-        {
-            rb.velocity = Vector2.zero;
-            transform.localPosition = Vector2.zero;
             EndEpisode();
         }
     }
@@ -128,7 +143,7 @@ public class CustomAgent : Agent
         targetTransform.localPosition = Vector2.zero;
         for (int i = 0; i < numChecks; i++)
         {
-            Vector3 possiblePosition = new Vector3(targetTransform.localPosition.x + Random.Range(-10, 10), targetTransform.localPosition.y + Random.Range(-10, 10), targetTransform.localPosition.z);
+            Vector3 possiblePosition = new Vector3(targetTransform.localPosition.x + Random.Range(-range, range), targetTransform.localPosition.y + Random.Range(-range, range), targetTransform.localPosition.z);
 
             if (!Physics2D.OverlapBox(possiblePosition, targetTransform.localScale, 0f))
             {

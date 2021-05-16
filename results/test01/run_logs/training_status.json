@@ -1,7 +1,47 @@
 {
+    "CustomAgent": {
+        "checkpoints": [
+            {
+                "steps": 499999,
+                "file_path": "results\\05\\CustomAgent\\CustomAgent-499999.onnx",
+                "reward": 1.0,
+                "creation_time": 1621070113.2089615,
+                "auxillary_file_paths": [
+                    "results\\05\\CustomAgent\\CustomAgent-499999.pt"
+                ]
+            },
+            {
+                "steps": 999999,
+                "file_path": "results\\05\\CustomAgent\\CustomAgent-999999.onnx",
+                "reward": 1.0,
+                "creation_time": 1621073252.083462,
+                "auxillary_file_paths": [
+                    "results\\05\\CustomAgent\\CustomAgent-999999.pt"
+                ]
+            },
+            {
+                "steps": 1000008,
+                "file_path": "results\\05\\CustomAgent\\CustomAgent-1000008.onnx",
+                "reward": 1.0,
+                "creation_time": 1621073252.175961,
+                "auxillary_file_paths": [
+                    "results\\05\\CustomAgent\\CustomAgent-1000008.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1000008,
+            "file_path": "results\\05\\CustomAgent.onnx",
+            "reward": 1.0,
+            "creation_time": 1621073252.175961,
+            "auxillary_file_paths": [
+                "results\\05\\CustomAgent\\CustomAgent-1000008.pt"
+            ]
+        }
+    },
     "metadata": {
         "stats_format_version": "0.3.0",
         "mlagents_version": "0.26.0",
-        "torch_version": "1.8.1+cu111"
+        "torch_version": "1.7.1+cu110"
     }
 }
