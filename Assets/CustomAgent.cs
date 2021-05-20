@@ -9,7 +9,7 @@ using Unity.MLAgents.Actuators;
 public class CustomAgent : Agent
 {
     private Rigidbody2D rb;
-    private Vector3 startingLocalPosition;
+    private Transform childSpriteTransform;
     public Transform targetTransform;
     public int numChecks;
     public float velocityMultiplier = 10;
@@ -42,10 +42,10 @@ public class CustomAgent : Agent
     private void Start()
     {
         range = startingRange;
+        childSpriteTransform = transform.GetChild(0);
         episodeCount = 0;
         rb = GetComponent<Rigidbody2D>();
         rb.angularVelocity = 0f;
-        startingLocalPosition = transform.localPosition;
     }
 
     public override void OnEpisodeBegin()
@@ -65,11 +65,6 @@ public class CustomAgent : Agent
             }
         }
 
-        /*
-         * It would be cool for later experiments to remove this and just have the agent freely move the enviroment.
-         */
-        transform.localPosition = Vector2.zero;
-
         ResetTargetPosition();
     }
 
@@ -83,13 +78,6 @@ public class CustomAgent : Agent
         // Target and Agent positions
         sensor.AddObservation(targetTransform.localPosition);
         sensor.AddObservation(transform.localPosition);
-        sensor.AddObservation(rb.velocity);
-
-        /*
-         * Possible observations to add: 
-         * 1. distance from the agent to the target
-         * 2. A raycast or boolean value that is true if there are no walls in the way of the agent and false if there is.
-         */
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -124,7 +112,7 @@ public class CustomAgent : Agent
 
         if (movementDirection != Vector2.zero)
         {
-            transform.up = rb.velocity;
+            childSpriteTransform.up = rb.velocity;
         }
 
     }

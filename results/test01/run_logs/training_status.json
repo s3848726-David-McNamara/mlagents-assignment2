@@ -2,40 +2,31 @@
     "CustomAgent": {
         "checkpoints": [
             {
-                "steps": 499999,
-                "file_path": "results\\05\\CustomAgent\\CustomAgent-499999.onnx",
-                "reward": 1.0,
-                "creation_time": 1621070113.2089615,
+                "steps": 8376,
+                "file_path": "results\\test01\\CustomAgent\\CustomAgent-8376.onnx",
+                "reward": null,
+                "creation_time": 1621546134.1588893,
                 "auxillary_file_paths": [
-                    "results\\05\\CustomAgent\\CustomAgent-499999.pt"
+                    "results\\test01\\CustomAgent\\CustomAgent-8376.pt"
                 ]
             },
             {
-                "steps": 999999,
-                "file_path": "results\\05\\CustomAgent\\CustomAgent-999999.onnx",
+                "steps": 259700,
+                "file_path": "results\\test01\\CustomAgent\\CustomAgent-259700.onnx",
                 "reward": 1.0,
-                "creation_time": 1621073252.083462,
+                "creation_time": 1621547632.3908317,
                 "auxillary_file_paths": [
-                    "results\\05\\CustomAgent\\CustomAgent-999999.pt"
-                ]
-            },
-            {
-                "steps": 1000008,
-                "file_path": "results\\05\\CustomAgent\\CustomAgent-1000008.onnx",
-                "reward": 1.0,
-                "creation_time": 1621073252.175961,
-                "auxillary_file_paths": [
-                    "results\\05\\CustomAgent\\CustomAgent-1000008.pt"
+                    "results\\test01\\CustomAgent\\CustomAgent-259700.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 1000008,
-            "file_path": "results\\05\\CustomAgent.onnx",
+            "steps": 259700,
+            "file_path": "results\\test01\\CustomAgent.onnx",
             "reward": 1.0,
-            "creation_time": 1621073252.175961,
+            "creation_time": 1621547632.3908317,
             "auxillary_file_paths": [
-                "results\\05\\CustomAgent\\CustomAgent-1000008.pt"
+                "results\\test01\\CustomAgent\\CustomAgent-259700.pt"
             ]
         }
     },
