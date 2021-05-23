@@ -9,15 +9,33 @@
                 "auxillary_file_paths": [
                     "results\\davieTest1\\CustomAgent\\CustomAgent-459398.pt"
                 ]
+            },
+            {
+                "steps": 499993,
+                "file_path": "results\\davieTest1\\CustomAgent\\CustomAgent-499993.onnx",
+                "reward": 1.0,
+                "creation_time": 1621316007.2806618,
+                "auxillary_file_paths": [
+                    "results\\davieTest1\\CustomAgent\\CustomAgent-499993.pt"
+                ]
+            },
+            {
+                "steps": 829512,
+                "file_path": "results\\davieTest1\\CustomAgent\\CustomAgent-829512.onnx",
+                "reward": 1.0,
+                "creation_time": 1621318981.9954426,
+                "auxillary_file_paths": [
+                    "results\\davieTest1\\CustomAgent\\CustomAgent-829512.pt"
+                ]
             }
         ],
         "final_checkpoint": {
-            "steps": 459398,
+            "steps": 829512,
             "file_path": "results\\davieTest1\\CustomAgent.onnx",
-            "reward": null,
-            "creation_time": 1621248447.8420982,
+            "reward": 1.0,
+            "creation_time": 1621318981.9954426,
             "auxillary_file_paths": [
-                "results\\davieTest1\\CustomAgent\\CustomAgent-459398.pt"
+                "results\\davieTest1\\CustomAgent\\CustomAgent-829512.pt"
             ]
         }
     },

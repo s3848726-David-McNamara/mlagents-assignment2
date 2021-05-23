@@ -81,9 +81,21 @@ public class CustomAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         // Target and Agent positions
-        sensor.AddObservation(targetTransform.localPosition);
+        //sensor.AddObservation(targetTransform.localPosition);
+
+        //Target offset from Agent
+        Vector3 relativeTargetPosition = targetTransform.localPosition - transform.localPosition;
+        //var d = Mathf.Sqrt(relativeTargetPosition.x * relativeTargetPosition.x + relativeTargetPosition.y * relativeTargetPosition.y);
+        //var xy = 1 / d * relativeTargetPosition;
+        //var positionRep = e 
+        
+        sensor.AddObservation(relativeTargetPosition);
+
         sensor.AddObservation(transform.localPosition);
         sensor.AddObservation(rb.velocity);
+
+        
+
 
         /*
          * Possible observations to add: 
