@@ -1,18 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 
+
 public class CustomAgent : Agent
 {
     private Rigidbody2D rb;
     private Transform childSpriteTransform;
+    private Vector3 origin;
+    private float healthBonus = 1.0f;
+
     public Transform targetTransform;
     public int numChecks;
     public float velocityMultiplier = 10;
+    public float distanceFadeMultiplier = 0.1f;
+    
 
     /*
      * Starting range is normally set to 3, so a max spawn area of +3 x and -3 x, and +3 y and -3 y.
@@ -43,9 +50,11 @@ public class CustomAgent : Agent
     {
         range = startingRange;
         childSpriteTransform = transform.GetChild(0);
+        origin = childSpriteTransform.position;
         episodeCount = 0;
         rb = GetComponent<Rigidbody2D>();
         rb.angularVelocity = 0f;
+        
     }
 
     public override void OnEpisodeBegin()
@@ -66,6 +75,7 @@ public class CustomAgent : Agent
         }
 
         ResetTargetPosition();
+        healthBonus = 1.0f;
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -75,9 +85,18 @@ public class CustomAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
+        //calculating the distance representation to Target
+        //formula from Week 11 lecture notes
+        Vector2 offset = targetTransform.localPosition - transform.localPosition;
+        var distance = Mathf.Sqrt(offset.x * offset.x + offset.y * offset.y);
+        Vector2 direction = (1 / distance) * offset;
+        var positionRep = Mathf.Exp(-1 * distanceFadeMultiplier * distance) * direction;
+
         // Target and Agent positions
-        sensor.AddObservation(targetTransform.localPosition);
+        sensor.AddObservation(positionRep);
+        sensor.AddObservation(targetTransform);
         sensor.AddObservation(transform.localPosition);
+        sensor.AddObservation(StepCount / MaxStep);
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -119,10 +138,45 @@ public class CustomAgent : Agent
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        //reaches the Target
         if (collision.gameObject.CompareTag("Target"))
         {
-            AddReward(1.0f);
+            Debug.Log($"y,{healthBonus},{StepCount}");
+
+            var file = new
+            StreamWriter("E:/Program Files/Unity/Hub/Editor/Projects/mlagents-assignment2/mlagents-assignment2/Observations/obs.csv", append: true);
+            file.WriteLine($"y,{healthBonus},{StepCount}");
+            file.Close();
+
+            AddReward(healthBonus);
             EndEpisode();
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        //gets hit by Torpedo
+        if (collision.gameObject.CompareTag("Torpedo"))
+        {
+            if(healthBonus > 0)
+            {
+                healthBonus -= 0.1f;
+            }
+            else
+            {
+                //if health is gone, reset the episode
+                Debug.Log($"n,0,{StepCount}");
+
+                var file = new
+            StreamWriter("E:/Program Files/Unity/Hub/Editor/Projects/mlagents-assignment2/mlagents-assignment2/Observations/obs.csv", append: true);
+                file.WriteLine($"n,0,{StepCount}");
+                file.Close();
+
+                this.gameObject.transform.position = origin;
+                EndEpisode();
+            }
+
+
         }
     }
 

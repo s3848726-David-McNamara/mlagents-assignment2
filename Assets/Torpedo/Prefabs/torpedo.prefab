@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6606541408548687497}
   - component: {fileID: 4528197170778226932}
   - component: {fileID: 9157121374526826610}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: torpedo
   m_TagString: Torpedo
   m_Icon: {fileID: 0}
@@ -98,7 +98,6 @@ MonoBehaviour:
   explosionParticles: {fileID: 4552151488724020740, guid: 1a52a4a3a17258b46b260aa4c7203d4e, type: 3}
   tr: {fileID: 8408412483956229546}
   movementSpeed: 5
-  existenceTime: 3
 --- !u!1 &2343835902010471249
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,7 +108,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8493896321462147589}
   - component: {fileID: 3529846794853587712}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: torpedo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -231,6 +230,10 @@ PrefabInstance:
     - target: {fileID: 1924006593602084651, guid: ee6a5b8b05a35584c84fd37581d9d8a5, type: 3}
       propertyPath: m_Name
       value: torpedo_trail
+      objectReference: {fileID: 0}
+    - target: {fileID: 1924006593602084651, guid: ee6a5b8b05a35584c84fd37581d9d8a5, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4229562047172911714, guid: ee6a5b8b05a35584c84fd37581d9d8a5, type: 3}
       propertyPath: m_RootOrder
