@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6606541408548687497}
   - component: {fileID: 4528197170778226932}
   - component: {fileID: 9157121374526826610}
-  m_Layer: 3
+  m_Layer: 8
   m_Name: torpedo
   m_TagString: Torpedo
   m_Icon: {fileID: 0}
@@ -108,7 +108,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8493896321462147589}
   - component: {fileID: 3529846794853587712}
-  m_Layer: 3
+  m_Layer: 8
   m_Name: torpedo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -233,7 +233,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1924006593602084651, guid: ee6a5b8b05a35584c84fd37581d9d8a5, type: 3}
       propertyPath: m_Layer
-      value: 3
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4229562047172911714, guid: ee6a5b8b05a35584c84fd37581d9d8a5, type: 3}
       propertyPath: m_RootOrder

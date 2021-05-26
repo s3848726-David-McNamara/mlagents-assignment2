@@ -94,8 +94,8 @@ public class CustomAgent : Agent
 
         // Target and Agent positions
         sensor.AddObservation(positionRep);
-        sensor.AddObservation(targetTransform);
-        sensor.AddObservation(transform.localPosition);
+        sensor.AddObservation(targetTransform); //TODO put offset
+        sensor.AddObservation(transform.localPosition); //TODO rid
         sensor.AddObservation(StepCount / MaxStep);
     }
 
@@ -137,6 +137,23 @@ public class CustomAgent : Agent
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //reaches the Target
+        if (collision.gameObject.CompareTag("Target"))
+        {
+            Debug.Log($"y,{healthBonus},{StepCount}");
+
+            var file = new
+            StreamWriter("E:/Program Files/Unity/Hub/Editor/Projects/mlagents-assignment2/mlagents-assignment2/Observations/obs.csv", append: true);
+            file.WriteLine($"y,{healthBonus},{StepCount}");
+            file.Close();
+
+            AddReward(healthBonus);
+            EndEpisode();
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
     {
         //reaches the Target
         if (collision.gameObject.CompareTag("Target"))
