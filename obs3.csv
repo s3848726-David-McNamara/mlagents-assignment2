@@ -1,0 +1,10 @@
+
+episode,successRate,rewardValue,timeRemaining
+1,T,1,500
+2,T,1,500
+
+episode,successRate,rewardValue,timeRemaining
+1,T,1,0
+
+episode,successRate,rewardValue,timeRemaining
+1,T,1,0

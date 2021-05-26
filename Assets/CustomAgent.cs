@@ -7,13 +7,19 @@ using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 
-
 public class CustomAgent : Agent
 {
     private Rigidbody2D rb;
     private Transform childSpriteTransform;
     private Vector3 origin;
     private float healthBonus = 1.0f;
+    public float torpedoDamage = 0.2f;
+
+    //For logging data. Set dataHeadings to whatever you want to record.
+    //Make sure to update any values you pass to SaveResults if you change these.
+    private static readonly string outputFile = Directory.GetCurrentDirectory() + "/Observations/obs3.csv";
+    private string dataHeadings = "episode,successRate,rewardValue,timeRemaining";
+    //successRate key: S = success, D = agent died, T = agent timed out
 
     public Transform targetTransform;
     public int numChecks;
@@ -45,6 +51,7 @@ public class CustomAgent : Agent
 
     private float range;
     private int episodeCount;
+    private bool completedEpisode;
 
     private void Start()
     {
@@ -54,11 +61,21 @@ public class CustomAgent : Agent
         episodeCount = 0;
         rb = GetComponent<Rigidbody2D>();
         rb.angularVelocity = 0f;
-        
+        completedEpisode = true;
+        SaveResults("");
+        SaveResults(dataHeadings);
     }
 
     public override void OnEpisodeBegin()
     {
+        //checks if the target timed out last time, and records it if true
+        if (!completedEpisode)
+        {
+            Debug.Log($"{episodeCount},T,{healthBonus},0");
+            SaveResults($"{episodeCount},T,{healthBonus},0");
+        }
+
+
         /*
          * So essentially, each time the agent reaches a goal this will increase the episode count,
          * if then agent reaches the goal enough, the goal will be able to spawn into a larger radius around the map,
@@ -75,6 +92,7 @@ public class CustomAgent : Agent
         }
 
         ResetTargetPosition();
+        completedEpisode = false;
         healthBonus = 1.0f;
     }
 
@@ -85,18 +103,22 @@ public class CustomAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
+        // Target and Agent positions
+        sensor.AddObservation(PositionRepresentation());
+        sensor.AddObservation(targetTransform.localPosition - transform.localPosition);
+        sensor.AddObservation(StepCount / MaxStep);
+    }
+
+    public Vector2 PositionRepresentation()
+    {
         //calculating the distance representation to Target
         //formula from Week 11 lecture notes
+
         Vector2 offset = targetTransform.localPosition - transform.localPosition;
         var distance = Mathf.Sqrt(offset.x * offset.x + offset.y * offset.y);
         Vector2 direction = (1 / distance) * offset;
         var positionRep = Mathf.Exp(-1 * distanceFadeMultiplier * distance) * direction;
-
-        // Target and Agent positions
-        sensor.AddObservation(positionRep);
-        sensor.AddObservation(targetTransform); //TODO put offset
-        sensor.AddObservation(transform.localPosition); //TODO rid
-        sensor.AddObservation(StepCount / MaxStep);
+        return positionRep;
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -141,31 +163,25 @@ public class CustomAgent : Agent
         //reaches the Target
         if (collision.gameObject.CompareTag("Target"))
         {
-            Debug.Log($"y,{healthBonus},{StepCount}");
-
-            var file = new
-            StreamWriter("E:/Program Files/Unity/Hub/Editor/Projects/mlagents-assignment2/mlagents-assignment2/Observations/obs.csv", append: true);
-            file.WriteLine($"y,{healthBonus},{StepCount}");
-            file.Close();
+            Debug.Log($"{episodeCount},S,{healthBonus},{(MaxStep - StepCount)}");
+            SaveResults($"{episodeCount},S,{healthBonus},{(MaxStep - StepCount)}");
 
             AddReward(healthBonus);
+            completedEpisode = true;
             EndEpisode();
         }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        //reaches the Target
+        //fixes a bug where initial Target collision might not have been caught
         if (collision.gameObject.CompareTag("Target"))
         {
-            Debug.Log($"y,{healthBonus},{StepCount}");
-
-            var file = new
-            StreamWriter("E:/Program Files/Unity/Hub/Editor/Projects/mlagents-assignment2/mlagents-assignment2/Observations/obs.csv", append: true);
-            file.WriteLine($"y,{healthBonus},{StepCount}");
-            file.Close();
+            Debug.Log($"{episodeCount},S,{healthBonus},{(MaxStep - StepCount)}");
+            SaveResults($"{episodeCount},S,{healthBonus},{(MaxStep - StepCount)}");
 
             AddReward(healthBonus);
+            completedEpisode = true;
             EndEpisode();
         }
     }
@@ -177,19 +193,16 @@ public class CustomAgent : Agent
         {
             if(healthBonus > 0)
             {
-                healthBonus -= 0.1f;
+                healthBonus -= torpedoDamage;
             }
             else
             {
                 //if health is gone, reset the episode
-                Debug.Log($"n,0,{StepCount}");
-
-                var file = new
-            StreamWriter("E:/Program Files/Unity/Hub/Editor/Projects/mlagents-assignment2/mlagents-assignment2/Observations/obs.csv", append: true);
-                file.WriteLine($"n,0,{StepCount}");
-                file.Close();
+                Debug.Log($"{episodeCount},D,{healthBonus},{(MaxStep - StepCount)}");
+                SaveResults($"{episodeCount},D,{healthBonus},{(MaxStep - StepCount)}");
 
                 this.gameObject.transform.position = origin;
+                completedEpisode = true;
                 EndEpisode();
             }
 
@@ -199,16 +212,31 @@ public class CustomAgent : Agent
 
     public void ResetTargetPosition()
     {
-        targetTransform.localPosition = Vector2.zero;
         for (int i = 0; i < numChecks; i++)
         {
-            Vector3 possiblePosition = new Vector3(targetTransform.localPosition.x + Random.Range(-range, range), targetTransform.localPosition.y + Random.Range(-range, range), targetTransform.localPosition.z);
+            Vector2 possiblePosition = new Vector2(transform.position.x + Random.Range(-range, range), transform.position.y + Random.Range(-range, range));
 
-            if (!Physics2D.OverlapBox(possiblePosition, targetTransform.localScale, 0f))
+            Vector2 transformedPosition = new Vector2(transform.parent.position.x - possiblePosition.x, transform.parent.position.y - possiblePosition.y);
+
+            if (transformedPosition.x < range &&
+                transformedPosition.y < range &&
+                transformedPosition.x > -range &&
+                transformedPosition.y > -range)
             {
-                targetTransform.localPosition = possiblePosition;
-                break;
+
+                if (!Physics2D.OverlapBox(possiblePosition, new Vector2(1,1), 0f))
+                {
+                    targetTransform.position = possiblePosition;
+                    break;
+                }
             }
         }
+    }
+
+    public void SaveResults(string observation)
+    {
+        var file = new StreamWriter(outputFile, append: true);
+        file.WriteLine(observation);
+        file.Close();
     }
 }
