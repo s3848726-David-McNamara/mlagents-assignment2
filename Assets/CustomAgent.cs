@@ -186,30 +186,6 @@ public class CustomAgent : Agent
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        //gets hit by Torpedo
-        if (collision.gameObject.CompareTag("Torpedo"))
-        {
-            if(healthBonus > 0)
-            {
-                healthBonus -= torpedoDamage;
-            }
-            else
-            {
-                //if health is gone, reset the episode
-                Debug.Log($"{episodeCount},D,{healthBonus},{(MaxStep - StepCount)}");
-                SaveResults($"{episodeCount},D,{healthBonus},{(MaxStep - StepCount)}");
-
-                this.gameObject.transform.position = origin;
-                completedEpisode = true;
-                EndEpisode();
-            }
-
-
-        }
-    }
-
     public void ResetTargetPosition()
     {
         for (int i = 0; i < numChecks; i++)
@@ -239,4 +215,32 @@ public class CustomAgent : Agent
         file.WriteLine(observation);
         file.Close();
     }
+
+
+    /*
+     * The following is ONLY for Torpedo shenanigans
+     * You can comment it out if you're not using the Torpedoes
+     */
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        //gets hit by Torpedo
+        if (collision.gameObject.CompareTag("Torpedo"))
+        {
+            if (healthBonus > 0)
+            {
+                healthBonus -= torpedoDamage;
+            }
+            else
+            {
+                //if health is gone, reset the episode
+                Debug.Log($"{episodeCount},D,{healthBonus},{(MaxStep - StepCount)}");
+                SaveResults($"{episodeCount},D,{healthBonus},{(MaxStep - StepCount)}");
+
+                this.gameObject.transform.position = origin;
+                completedEpisode = true;
+                EndEpisode();
+            }
+        }
+    }
+
 }

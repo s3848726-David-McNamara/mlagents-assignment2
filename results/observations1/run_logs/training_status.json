@@ -1,0 +1,47 @@
+{
+    "CustomAgent": {
+        "checkpoints": [
+            {
+                "steps": 499995,
+                "file_path": "results\\observations1\\CustomAgent\\CustomAgent-499995.onnx",
+                "reward": 0.9849056612770513,
+                "creation_time": 1622013777.488849,
+                "auxillary_file_paths": [
+                    "results\\observations1\\CustomAgent\\CustomAgent-499995.pt"
+                ]
+            },
+            {
+                "steps": 999994,
+                "file_path": "results\\observations1\\CustomAgent\\CustomAgent-999994.onnx",
+                "reward": 0.9875000007450581,
+                "creation_time": 1622017400.201428,
+                "auxillary_file_paths": [
+                    "results\\observations1\\CustomAgent\\CustomAgent-999994.pt"
+                ]
+            },
+            {
+                "steps": 1000005,
+                "file_path": "results\\observations1\\CustomAgent\\CustomAgent-1000005.onnx",
+                "reward": 0.9882352948188782,
+                "creation_time": 1622017400.306733,
+                "auxillary_file_paths": [
+                    "results\\observations1\\CustomAgent\\CustomAgent-1000005.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1000005,
+            "file_path": "results\\observations1\\CustomAgent.onnx",
+            "reward": 0.9882352948188782,
+            "creation_time": 1622017400.306733,
+            "auxillary_file_paths": [
+                "results\\observations1\\CustomAgent\\CustomAgent-1000005.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.26.0",
+        "torch_version": "1.7.1+cu110"
+    }
+}
